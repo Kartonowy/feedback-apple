@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="index_style.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Playfair Display|Rubik|Gloock">
+        <title>TeaBag - Home</title>
+    </head>
+    <body>
+        <nav>
+            <div id="sidebarDiv">
+                <button id="sidebarBtn">☰</button>
+                <button id="sidebarBtnClose">✖</button>
+            </div>
+
+            <div id="sidebar" style="display: none;">
+                <a href="#">Link 1</a>
+                <a href="#">Link 2</a>
+                <a href="#">Link 3</a>
+            </div>
+            
+            <div id="btns">
+                <button id="btn1"><a href="login_page.html">Log in</a></button>
+                <button id="btn2">Register your school</button>
+            </div>
+
+        </nav>
+
+        <header>
+
+            <h1>TeaBag</h1>
+            <p>Write. Read. Communicate.</p>
+
+        </header>
+
+        <main>
+
+            <div id="idea">
+                <div id="a1">
+                    <h2>The idea</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis scelerisque nibh nec rhoncus sollicitudin. Aliquam a scelerisque purus. Nam laoreet accumsan turpis, vel faucibus eros. Etiam consequat risus et mauris finibus, ut tempus risus venenatis. Nunc laoreet quis ex sed consequat. Nam vel eros justo. Curabitur posuere, metus eget lacinia sagittis, ligula odio faucibus lorem, sed rhoncus ante quam id magna. Proin quis tincidunt ante. Ut placerat sem sit amet tellus consequat lacinia. Phasellus quis euismod mauris, sit amet viverra lacus. Curabitur euismod ornare dolor semper mattis. Vestibulum consectetur pulvinar tellus, vestibulum iaculis orci sagittis a. In est odio, vulputate ut convallis at, suscipit nec ante.</p>
+                </div>
+
+                <div id="a2"><img src="img/img2.gif"></div>
+            </div>
+
+            <div id="work">
+                <div id="b2"><img src="img/img1.gif"></div>
+
+                <div id="b1">
+                    <h2>How does it work</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis scelerisque nibh nec rhoncus sollicitudin. Aliquam a scelerisque purus. Nam laoreet accumsan turpis, vel faucibus eros. Etiam consequat risus et mauris finibus, ut tempus risus venenatis. Nunc laoreet quis ex sed consequat. Nam vel eros justo. Curabitur posuere, metus eget lacinia sagittis, ligula odio faucibus lorem, sed rhoncus ante quam id magna. Proin quis tincidunt ante. Ut placerat sem sit amet tellus consequat lacinia. Phasellus quis euismod mauris, sit amet viverra lacus. Curabitur euismod ornare dolor semper mattis. Vestibulum consectetur pulvinar tellus, vestibulum iaculis orci sagittis a. In est odio, vulputate ut convallis at, suscipit nec ante.</p>
+                </div>
+            </div>
+
+        </main>
+
+        <section>
+
+            <h3>Get started today</h3>
+            <button id="btn3">Register your school</button>
+
+        </section>
+
+        <footer>
+            <p>27/11/2023</p>
+        </footer>
+
+        <script>
+            sidebarBtn.addEventListener("click", SidebarOpen);
+            sidebarBtnClose.addEventListener("click", SidebarClose);
+
+            // function SidebarOpen() 
+            {
+                sidebar.style.display = "block";
+                sidebarBtn.style.display = "none";
+                sidebarBtnClose.style.display = "block";
+            }
+
+            // function SidebarClose()
+            {
+                sidebar.style.display = "none";
+                sidebarBtn.style.display = "block";
+                sidebarBtnClose.style.display = "none";
+            }
+            </script>
+    </body>
+</html>

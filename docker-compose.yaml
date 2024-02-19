@@ -1,0 +1,12 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    ports: 
+      - 5432:5432
+    environment:
+      POSTGRES_USER: octavia
+      POSTGRES_PASSWORD: twojastara
+      POSTGRES_DB: projecte
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
