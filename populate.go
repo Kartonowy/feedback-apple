@@ -3,12 +3,10 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"github.com/jackc/pgx/v5"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
-
-	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -37,8 +35,21 @@ CREATE TABLE IF NOT EXISTS student (
     primary key (id)
 );
 `
-func populateDB(conn *pgx.Conn) {
-    _, err := conn.Exec(context.Background(), "DROP TABLE IF EXISTS teacher; DROP TABLE IF EXISTS student; DROP TABLE IF EXISTS school;")
+func main() {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Printf("Error loading env file: %s", err)
+	}
+
+	conn, err := pgx.Connect(context.Background(), "postgres://octavia:twojastara@localhost:5432/postgres")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+
+	defer conn.Close(context.Background())
+    _, err = conn.Exec(context.Background(), "DROP TABLE IF EXISTS teacher; DROP TABLE IF EXISTS student; DROP TABLE IF EXISTS school;")
 
 	if err != nil {
 		panic(err)

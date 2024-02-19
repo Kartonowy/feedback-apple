@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 )
@@ -56,6 +58,17 @@ func main() {
 	var teacher Teacher
 	row := conn.QueryRow(context.Background(), "SELECT * FROM teacher LIMIT 1")
 	err = row.Scan(&teacher.id, &teacher.email, &teacher.first_name, &teacher.last_name, &teacher.school_id, &teacher.subject, &teacher.messages)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Here's the output: %v", teacher)
+
+    AddMessage(conn, 1)
+
+	row = conn.QueryRow(context.Background(), "SELECT * FROM teacher LIMIT 1")
+	err = row.Scan(&teacher.id, &teacher.email, &teacher.first_name, &teacher.last_name, &teacher.school_id, &teacher.subject, &teacher.messages)
 	if err != nil {
 		panic(err)
 	}
@@ -72,4 +85,15 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Listening on port 3333")
+}
+
+func AddMessage(conn *pgx.Conn, id int32) {
+    message := map[string]string{"behaviour": "good"}
+    messages_json, _ := json.Marshal(message) 
+
+    _, err := conn.Exec(context.Background(), `UPDATE teacher SET messages = messages || $2 WHERE teacher.id = $1`, id ,[][]byte{messages_json})
+
+    if err != nil {
+        panic(err)
+    }
 }
