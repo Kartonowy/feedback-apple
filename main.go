@@ -36,7 +36,7 @@ type Student struct {
 	school_id  int    `db:"school_id"`
 }
 type School struct {
-	school_id   int32  `db:"id"`
+	id   int32  `db:"id"`
 	school_name string `db:"school_name"`
 }
 
@@ -63,7 +63,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("Here's the output: %v", teacher)
+	fmt.Printf("Here's the output: %v\n", teacher)
 
     AddMessage(conn, 1)
 
@@ -73,18 +73,21 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("Here's the output: %v", teacher)
+    fmt.Printf("Here's the output: %v\n", teacher)
 
-	uifs := http.FileServer(http.Dir("./public"))
-
-	http.Handle("/", uifs)
-	cssfs := http.FileServer(http.Dir("./public/style.css"))
-	http.Handle("/style.css", cssfs)
-	err = http.ListenAndServe(":3333", nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Listening on port 3333")
+    rows, err := conn.Query(context.Background(), "SELECT id, school_name FROM school")
+    defer rows.Close()
+    if err != nil {
+        panic(err)
+    }
+    for rows.Next() {
+        var school School
+        err = rows.Scan(&school.id, &school.school_name)
+        if err != nil {
+            panic(err)
+        }
+        fmt.Printf("Here's the output: %v\n", school)
+    }
 }
 
 func AddMessage(conn *pgx.Conn, id int32) {
