@@ -6,14 +6,24 @@
     <title>Document</title>
 </head>
 <body>
-    register 
     <form action="/addstudent/" method="post">
-        <input type="text" name="name" id="">
-        <input type="text" name="surname" id="">
-        <input type="text" name="email" id="">
+        <input type="text" name="first_name" placeholder="First Name">
+        <input type="text" name="last_name" placeholder="Last Name">
+        <input type="text" name="email" placeholder="Email">
         <select name="school" id="">
             <!-- insert schools somehow -->
         </select>
+        <input type="submit" value="Submit">
+    </form>
+    <br>
+    <form action="/teacher/" method="post">
+        <input type="text" name="first_name" placeholder="First Name">
+        <input type="text" name="last_name" placeholder="Last Name">
+        <input type="text" name="email" placeholder="Email">
+        <select name="school" id="">
+            <!-- insert schools somehow -->
+        </select>
+        <input type="text" name="subjects" placeholder="Subjects (separated by comma)"> 
         <input type="submit" value="Submit">
     </form>
 </body>

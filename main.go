@@ -13,11 +13,6 @@ import (
 	"os"
 )
 
-type OpinionForm struct {
-	teacherselect int32
-	review        string
-}
-
 type Teacher struct {
 	id         int32               `db:"id"`
 	email      string              `db:"email"`
@@ -76,18 +71,10 @@ func main() {
 		w.Write(GetSchools(conn))
 	})
 
-    router.HandleFunc("/addstudent/", func(w http.ResponseWriter, r *http.Request) {
-        r.ParseForm()
-        query := r.PostForm.Get("name")
-        defer r.Body.Close()
-        fmt.Printf("%v\n", query)
-    })
-    // TODO: ADD ADDING TO THe DB ASAP
-
+	router.HandleFunc("/addstudent/", func(w http.ResponseWriter, r *http.Request) { addStudent(w, r, conn) })
 
 	fs := http.FileServer(http.Dir("static"))
 	router.Handle("/static/*", http.StripPrefix("/static/", fs))
-
 
 	err = http.ListenAndServe(":3333", router)
 	if err != nil {
@@ -126,4 +113,34 @@ func GetSchools(conn *pgx.Conn) []byte {
 	realoutput, _ := json.Marshal(output)
 	fmt.Printf("%v\n", realoutput)
 	return realoutput
+}
+
+func addStudent(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
+	r.ParseForm()
+	var query int32
+	defer r.Body.Close()
+
+	row := conn.QueryRow(context.Background(), fmt.Sprintf("SELECT id FROM school WHERE school_name = '%s'", r.PostForm.Get("school")))
+
+	row.Scan(&query)
+	_, err := conn.Exec(context.Background(),
+		fmt.Sprintf("INSERT INTO student (email, first_name, last_name, school_id) VALUES ('%s', '%s', '%s', '%d')",
+			r.PostForm.Get("email"),
+			r.PostForm.Get("first_name"),
+			r.PostForm.Get("last_name"),
+			query))
+
+	if err != nil {
+		log.Printf("ERROR WHILE INSERTING STUDENTS INTO DB \n Query was: INSERT INTO student (email, first_name, last_name, school_id) VALUES ('%s', '%s', '%s', '%d') \n",
+			r.PostForm.Get("email"),
+			r.PostForm.Get("first_name"),
+			r.PostForm.Get("last_name"),
+			query)
+		log.Fatalf("%v", err)
+	}
+	fmt.Printf("query: %v\n", query)
+}
+
+func addTeacher(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
+
 }
