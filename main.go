@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
-	"log"
-	"net/http"
-	"os"
 )
 
 type Teacher struct {
@@ -37,7 +38,6 @@ type School struct {
 
 func main() {
 	err := godotenv.Load(".env")
-
 	if err != nil {
 		log.Printf("Error loading env file: %s", err)
 	}
@@ -50,16 +50,6 @@ func main() {
 
 	defer conn.Close(context.Background())
 
-	var teacher Teacher
-	row := conn.QueryRow(context.Background(), "SELECT * FROM teacher LIMIT 1")
-	err = row.Scan(&teacher.id, &teacher.email, &teacher.first_name, &teacher.last_name, &teacher.school_id, &teacher.subject, &teacher.messages)
-
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("Here's the output: %v\n", teacher)
-
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
@@ -68,7 +58,9 @@ func main() {
 	})
 
 	router.HandleFunc("/schools/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write(GetSchools(conn))
+        encoder := json.NewEncoder(w)
+        encoder.SetEscapeHTML(false)
+        encoder.Encode(GetSchools(conn))
 	})
 
 	router.HandleFunc("/addstudent/", func(w http.ResponseWriter, r *http.Request) { addStudent(w, r, conn) })
@@ -94,9 +86,11 @@ func AddMessage(conn *pgx.Conn, id int32) {
 	}
 }
 
-func GetSchools(conn *pgx.Conn) []byte {
+func GetSchools(conn *pgx.Conn) string {
 	rows, err := conn.Query(context.Background(), "SELECT id, school_name FROM school")
 	output := make(map[string]string)
+
+    var htmled_output string
 
 	defer rows.Close()
 	if err != nil {
@@ -109,10 +103,10 @@ func GetSchools(conn *pgx.Conn) []byte {
 			panic(err)
 		}
 		output[fmt.Sprintf("%v", school.id)] = school.school_name
+        htmled_output += fmt.Sprintf("<option value='%v'>%v</option>", school.school_name, school.school_name)
 	}
-	realoutput, _ := json.Marshal(output)
-	fmt.Printf("%v\n", realoutput)
-	return realoutput
+    fmt.Println(htmled_output)
+	return htmled_output
 }
 
 func addStudent(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {

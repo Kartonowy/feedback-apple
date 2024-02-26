@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content Type" content="text/html; charset=utf-8">
     <title>Document</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 </head>
 <body>
     <form action="/addstudent/" method="post">
@@ -20,7 +21,7 @@
         <input type="text" name="first_name" placeholder="First Name">
         <input type="text" name="last_name" placeholder="Last Name">
         <input type="text" name="email" placeholder="Email">
-        <select name="school" id="">
+        <select name="school" id="" hx-trigger="load" hx-get="/schools/" hx-swap="innerHTML">
             <!-- insert schools somehow -->
         </select>
         <input type="text" name="subjects" placeholder="Subjects (separated by comma)"> 
