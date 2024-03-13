@@ -7,26 +7,12 @@
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 </head>
 <body>
-    <form action="/addstudent/" method="post">
+    <form action="/register/" method="post">
         <input type="text" name="first_name" placeholder="First Name">
         <input type="text" name="last_name" placeholder="Last Name">
         <input type="text" name="email" placeholder="Email">
-        <select name="school" id="">
-            <!-- insert schools somehow -->
-        </select>
-        <input type="submit" value="Submit">
-    </form>
-    <br>
-    <form action="/teacher/" method="post">
-        <input type="text" name="first_name" placeholder="First Name">
-        <input type="text" name="last_name" placeholder="Last Name">
-        <input type="text" name="email" placeholder="Email">
-        <select name="school" id="" hx-trigger="load" hx-get="/schools/" hx-swap="innerHTML">
-            <!-- insert schools somehow -->
-        </select>
-        <input type="text" name="subjects" placeholder="Subjects (separated by comma)"> 
+        <input type="password" name="password" placeholder="Password">
         <input type="submit" value="Submit">
     </form>
 </body>
-<script src="fetch_schools.js"></script>
 </html>
