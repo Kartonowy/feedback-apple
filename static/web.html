@@ -7,9 +7,9 @@
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 </head>
 <body>
-   <button hx-post="/gencode/">Generate lobby code</button> 
+   <button hx-post="/gencode/" hx-swap="outerHTML" hx-trigger="click">Generate lobby code</button> 
    <br>
-   <form action="/join/" method="post">
+   <form action="/redirect_lobby/" method="post">
         <input type="text" name="code" placeholder="Enter code">
         <input type="submit" value="Enter ">
    </form>

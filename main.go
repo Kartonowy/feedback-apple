@@ -7,13 +7,15 @@ import (
 	"log"
 	"net/http"
 	"os"
+    "strings"
 
+	"app/auth"
+    "app/join"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
-    "app/auth"
 )
 
 type Teacher struct {
@@ -23,10 +25,6 @@ type Teacher struct {
 	last_name   string   `db:"last_name"`
 	class_codes []string `db:"class_codes"`
 }
-
-
-
-var sessions = map[string]auth.Session{}
 
 func main() {
 	err := godotenv.Load(".env")
@@ -45,27 +43,59 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
-
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("welcome"))
 	})
 
-    router.Post("/register/", func(w http.ResponseWriter, r *http.Request) {
-        addAccount(w, r, conn) 
+	router.Post("/register/", func(w http.ResponseWriter, r *http.Request) {
+		addAccount(w, r, conn)
+	})
+
+	router.Post("/login/", func(w http.ResponseWriter, r *http.Request) {
+		auth.Login(w, r, conn)
+	})
+
+	router.Get("/welcome/", func(w http.ResponseWriter, r *http.Request) {
+		auth.Auth(w, r)
+	})
+
+	router.Post("/logout/", func(w http.ResponseWriter, r *http.Request) {
+		auth.ClearCookie(w)
+		w.Header().Add("HX-Redirect", "/static/login.html")
+	})
+
+	router.Post("/gencode/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(auth.CodeGen(w, r, conn)))
+
+	})
+
+    router.Post("/redirect_lobby/", func(w http.ResponseWriter, r *http.Request) {
+        r.ParseForm()
+        http.Redirect(w, r, fmt.Sprintf("/join/%s", strings.Trim(r.PostForm.Get("code"), " ")), http.StatusSeeOther)
     })
+
+
+    router.Get("/join/{code}", func(w http.ResponseWriter, r *http.Request) {
+        code := chi.URLParam(r, "code")
+        join.JoinClass(w, r, code, conn)
+    })
+
+    router.Post("/rate/", func(w http.ResponseWriter, r *http.Request) {
+        for _, c := range r.Cookies() {
+            fmt.Printf("Cookie: %s\n", c.Value)
+        }
     
-    router.Post("/login/", func(w http.ResponseWriter, r *http.Request) {
-        auth.Login(w, r, conn, sessions)
+        cookie, err := r.Cookie("lobby_code")
+
+        if err != nil {
+            fmt.Println("No cookie found")
+            w.WriteHeader(http.StatusUnauthorized)
+            return
+        }
+
+        fmt.Printf("Got cookie: %s\n", cookie) 
     })
 
-    router.Get("/welcome/", func(w http.ResponseWriter, r *http.Request) {
-        auth.Auth(w, r, sessions)
-    })
-
-    router.Post("/logout/", func(w http.ResponseWriter, r *http.Request) {
-       auth.ClearCookie(w) 
-       w.Header().Add("HX-Redirect", "/static/login.html")
-    })
 
 	fs := http.FileServer(http.Dir("static"))
 	router.Handle("/static/*", http.StripPrefix("/static/", fs))
@@ -88,25 +118,23 @@ func AddMessage(conn *pgx.Conn) {
 	}
 }
 
-
-
 func addAccount(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
-    r.ParseForm()
+	r.ParseForm()
 
-    defer r.Body.Close()
+	defer r.Body.Close()
 
-    hash, err := bcrypt.GenerateFromPassword([]byte(r.PostForm.Get("password")), 14)
+	hash, err := bcrypt.GenerateFromPassword([]byte(r.PostForm.Get("password")), 14)
 
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 
-    _, err = conn.Exec(context.Background(),
-        `INSERT INTO teachers (email, first_name, last_name, password ,class_codes) 
+	_, err = conn.Exec(context.Background(),
+		`INSERT INTO teachers (email, first_name, last_name, password ,class_codes) 
         VALUES ($1, $2, $3, $4, $5)`,
-        r.PostForm.Get("email"), r.PostForm.Get("first_name"), r.PostForm.Get("last_name"), hash  ,[]string{})
+		r.PostForm.Get("email"), r.PostForm.Get("first_name"), r.PostForm.Get("last_name"), hash, []string{})
 
-        if err != nil {
-            panic(err)
-        }
+	if err != nil {
+		panic(err)
+	}
 }

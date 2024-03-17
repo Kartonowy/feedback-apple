@@ -1,10 +1,12 @@
 package auth
 
 import (
-    "context"
-    "fmt"
-    "net/http"
-    "time"
+	"app/codegen"
+	"context"
+	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -17,13 +19,16 @@ type Credentials struct {
 }
 
 type Session struct {
-    username string
+    Username string
     expiry time.Time
 }
+
 
 func (s Session) isExpired() bool {
     return s.expiry.Before(time.Now())
 }
+
+var sessions = map[string]Session{}
 
 func ClearCookie(w http.ResponseWriter) {
     cookie := &http.Cookie{
@@ -36,7 +41,63 @@ func ClearCookie(w http.ResponseWriter) {
     http.SetCookie(w, cookie)
 }
 
-func Login(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, sessions map[string]Session) {
+func CodeGen(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) string {
+        fmt.Println("Generating code")
+        cookie, err := r.Cookie("session_token")
+
+        fmt.Println(cookie.Value)
+
+        if err != nil {
+            panic(err)
+        }
+        
+        fmt.Printf("%s\n", sessions[cookie.Value].Username)
+
+        // Check if code already exists
+        res, err := conn.Query(context.Background(), fmt.Sprintf("SELECT class_codes FROM teachers"))
+        if err != nil {
+            panic(err)
+        }
+
+        defer res.Close()
+        code := codegen.RandSeq(6)
+        isUnique := false
+        for !isUnique {
+
+            code = codegen.RandSeq(6)
+
+            for res.Next() {
+                var codes []string
+
+                err := res.Scan(&codes)
+
+                if err != nil {
+                    panic(err)
+                }
+                for _, v := range codes {
+                    if v == code {
+                        isUnique = false
+                        break
+                    } else {
+                        isUnique = true
+                    }
+                }
+            }
+        }
+
+        _, err = conn.Exec(context.Background(),
+        fmt.Sprintf("UPDATE teachers SET class_codes = array_append(class_codes, '%s') WHERE email = '%s';", 
+        code, sessions[cookie.Value].Username))
+        fmt.Println("Code generated")
+
+        if err != nil {
+            panic(err)
+        }
+
+        return code
+}
+
+func Login(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 
     err := r.ParseForm()
 
@@ -66,7 +127,7 @@ func Login(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, sessions map[
     expiresAt := time.Now().Add(120 * time.Minute)
 
     sessions[sessionToken] = Session {
-        username: credentials.Email,
+        Username: credentials.Email,
         expiry: expiresAt,
     }
 
@@ -81,7 +142,7 @@ func Login(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, sessions map[
     http.Redirect(w, r, "/welcome/", http.StatusSeeOther)
 }
 
-func Auth(w http.ResponseWriter, r *http.Request, sessions map[string]Session) {
+func Auth(w http.ResponseWriter, r *http.Request) {
     c, err := r.Cookie("session_token")
 
     if err != nil {
