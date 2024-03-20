@@ -9,6 +9,7 @@ import (
 	"os"
     "strings"
 
+    "app/response"
 	"app/auth"
     "app/join"
 	"github.com/go-chi/chi/v5"
@@ -44,8 +45,11 @@ func main() {
 	router.Use(middleware.Logger)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
+        http.ServeFile(w, r, "static/join.html")
 	})
+    router.Get("/account/", func(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, "static/login.html")
+    })
 
 	router.Post("/register/", func(w http.ResponseWriter, r *http.Request) {
 		addAccount(w, r, conn)
@@ -61,7 +65,7 @@ func main() {
 
 	router.Post("/logout/", func(w http.ResponseWriter, r *http.Request) {
 		auth.ClearCookie(w)
-		w.Header().Add("HX-Redirect", "/static/login.html")
+		w.Header().Add("HX-Redirect", "/account/")
 	})
 
 	router.Post("/gencode/", func(w http.ResponseWriter, r *http.Request) {
@@ -81,24 +85,39 @@ func main() {
     })
 
     router.Post("/rate/", func(w http.ResponseWriter, r *http.Request) {
-        for _, c := range r.Cookies() {
-            fmt.Printf("Cookie: %s\n", c.Value)
-        }
-    
-        cookie, err := r.Cookie("lobby_code")
-
-        if err != nil {
-            fmt.Println("No cookie found")
-            w.WriteHeader(http.StatusUnauthorized)
-            return
-        }
-
-        fmt.Printf("Got cookie: %s\n", cookie) 
+        join.Rate(w, r, conn)
     })
 
+    router.Post("/get_opinions/", func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte(response.GetOpinions(w, r, conn)))
+    })
 
-	fs := http.FileServer(http.Dir("static"))
-	router.Handle("/static/*", http.StripPrefix("/static/", fs))
+    router.Post("/get_details/", func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte(response.GetDetails(w, r, conn)))
+    })
+
+    router.Get("/redirect/{code}", func(w http.ResponseWriter, r *http.Request) {
+        code := chi.URLParam(r, "code")
+        w.Header().Add("HX-Redirect", fmt.Sprintf("/details/%s", code))
+    })
+
+    router.Get("/details/{code}", func(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, "static/details.html")
+    })
+
+    router.Get("/styles/{file}", func(w http.ResponseWriter, r *http.Request) {
+        file := chi.URLParam(r, "file")
+        http.ServeFile(w, r, fmt.Sprintf("static/styles/%s", file))
+    })
+
+    router.Get("/scripts/{file}", func(w http.ResponseWriter, r *http.Request) {
+        file := chi.URLParam(r, "file")
+        http.ServeFile(w, r, fmt.Sprintf("static/scripts/%s", file))
+    })
+
+    router.Get("/thankyou/", func(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, "static/thankyou.html")
+    })
 
 	err = http.ListenAndServe(":3333", router)
 	if err != nil {
@@ -106,6 +125,7 @@ func main() {
 	}
 	fmt.Println("Listening on port 3333")
 }
+
 
 func AddMessage(conn *pgx.Conn) {
 	message := map[string]string{"behaviour": "good"}

@@ -1,14 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form action="/rate/" method="post">
-        <input type="text" name="rating" id="">
-        <input type="submit" value="Submit">
-    </form>
-</body>
+    <head>
+        <meta charset="utf-8">
+<!--         <link rel="stylesheet" href="style.css"> -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Playfair Display|Rubik|Gloock">
+        
+        <title>TeaBag</title>
+    </head>
+    <body>
+        <!-- MAIN -->
+        <main>
+            <header>
+                <p>Click. Slide. <span id="comm">Interact</span>.</p>
+                <p id="heading">TeaBag</p>
+            </header>
+            
+            <form>
+                <p id="info">Single out the feedback</p>
+                <div id="m">
+                    <button id="b1" class="chooseFeedback">Lessons</button>
+                    <button id="b2" class="chooseFeedback">Exams</button>
+                    <button id="b3" class="chooseFeedback">Other</button>
+        
+                </div>
+                <div id="v"></div>
+
+                <div id="check">
+                    <input type="checkbox" required>
+                    <p>By sending my feedback I agree to follow the <a id="rules" href="rules_en.html">rules</a>.</p>
+                </div>
+
+                <button id="sendButton" type="submit">Send</button>
+            </form>
+        </main>
+        <script src="/scripts/form.js"></script>
+            
+         
+    </body>
 </html>

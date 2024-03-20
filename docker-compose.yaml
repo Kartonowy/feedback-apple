@@ -6,7 +6,7 @@ services:
       - 5432:5432
     environment:
       POSTGRES_USER: octavia
-      POSTGRES_PASSWORD: twojastara
-      POSTGRES_DB: projecte
+      POSTGRES_PASSWORD: Decidueye
+      POSTGRES_DB: futureschool
     volumes:
       - ./db-data/:/var/lib/postgresql/data/

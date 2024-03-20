@@ -3,9 +3,17 @@ package join
 import (
 	"fmt"
 	"net/http"
+    "encoding/json"
 	"github.com/jackc/pgx/v5"
     "context"
 )
+
+type Response struct {
+    FirstChoice string `json:"first_choice"`
+    SecondChoice string `json:"second_choice"`
+    ThirdChoice string `json:"third_choice"`
+    Rating string `json:"rating"`
+}
 
 func JoinClass(w http.ResponseWriter, r *http.Request, code string, conn *pgx.Conn) {
 
@@ -30,9 +38,6 @@ func JoinClass(w http.ResponseWriter, r *http.Request, code string, conn *pgx.Co
         }
 
         for _, c := range codes {
-            fmt.Printf("code: %s ?=", code)
-            fmt.Printf("c: %s\n", c)
-            fmt.Printf("isCorrect: %t\n", c == code)
             if code == c {
                 isCorrect = true
                 break
@@ -58,5 +63,51 @@ func JoinClass(w http.ResponseWriter, r *http.Request, code string, conn *pgx.Co
     }
 
     http.SetCookie(w, cookie)
-    http.Redirect(w, r, "/static/form.html", http.StatusSeeOther)
+    http.ServeFile(w, r, "static/form.html")
+}
+
+func Rate(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
+    r.ParseForm()
+    cookie, err := r.Cookie("lobby_code")
+
+    if err != nil {
+        fmt.Println("No cookie found")
+        w.WriteHeader(http.StatusUnauthorized)
+        return
+    }
+
+    var n Response
+
+    decoder := json.NewDecoder(r.Body)
+
+    err = decoder.Decode(&n)
+
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("r %v\n", n)
+
+
+    rat := Response{ 
+        FirstChoice: n.FirstChoice,
+        SecondChoice: n.SecondChoice,
+        ThirdChoice: n.ThirdChoice,
+        Rating: n.Rating,
+    }
+
+    jsoned, _ := json.Marshal(rat)
+
+    fmt.Println("Rating: ", string(jsoned))
+
+
+    _, err = conn.Exec(context.Background(),
+    "UPDATE classes SET responses = array_append(responses, $1) WHERE id = $2",
+    []byte(jsoned), cookie.Value)
+
+    if err != nil {
+        panic(err)
+    }
+
+	w.Header().Add("HX-Redirect", "/thankyou/")
 }

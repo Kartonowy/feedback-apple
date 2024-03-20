@@ -88,11 +88,19 @@ func CodeGen(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) string {
         _, err = conn.Exec(context.Background(),
         fmt.Sprintf("UPDATE teachers SET class_codes = array_append(class_codes, '%s') WHERE email = '%s';", 
         code, sessions[cookie.Value].Username))
-        fmt.Println("Code generated")
-
+        fmt.Println("Code added to teacher " + sessions[cookie.Value].Username)
         if err != nil {
             panic(err)
         }
+
+        _, err = conn.Exec(context.Background(),
+        fmt.Sprintf("INSERT INTO classes (id, responses) VALUES ('%s', '{}');", code))
+        fmt.Println("Code added to classes")
+        if err != nil {
+            panic(err)
+        }
+
+        fmt.Println("Code generated")
 
         return code
 }
@@ -169,5 +177,12 @@ func Auth(w http.ResponseWriter, r *http.Request) {
         return
     }
     fmt.Println("Redirecting to web.html")
-    http.Redirect(w, r, "/static/web.html", http.StatusSeeOther)
+    http.ServeFile(w, r, "static/web.html")
+}
+
+func GetSession(uuid string) (string, error) {
+    if _, exists := sessions[uuid]; !exists {
+        return "", fmt.Errorf("No session found")
+    }
+    return sessions[uuid].Username, nil
 }
