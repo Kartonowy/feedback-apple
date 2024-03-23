@@ -3,12 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    <title>Web</title>
+    <link rel="stylesheet" href="/styles/join_and_other.css"/>
+    <style>
+        main{
+            display: flex;
+            flex-direction: row;
+           
+            justify-content: space-evenly;
+        }
+        h1, h2{
+            font-size: 2vh;
+            
+        }
+        h3{
+            font-size: 6vh;
+            color: var(--col5);
+        }
+        .containers{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            border-radius: 15px;
+            width: 40%;
+            height: 80%;
+            background-color: var(--col2);  
+        }
+
+        #i1> #i2>*{
+        font-size: 3vh;
+        line-height: 10px;
+        }
+        #i2{
+            overflow:  hidden; 
+            padding-top: 80px;
+        }
+        #i2:hover{
+            overflow:  auto;
+        }
+        #hereCode {
+            font-size: 3vh;
+            color: var(--col5);
+        }
+        li > h2, li > div {
+            font-size: 2vh;
+            color: var(--col5);
+        }
+        h3 {
+            font-size: 2vh;
+        }
+    </style>
+    <script src="/htmx/htmx.min.js"></script
 </head>
 <body>
-   <button hx-post="/gencode/" hx-swap="afterend" hx-trigger="click">Generate lobby code</button> 
-   <button hx-post="/logout/" hx-trigger="click" hx-swap="none">Logout</button>
-   <button hx-post="/get_opinions/" hx-trigger="click" hx-swap="afterend">Get responses</button>
+   
+     <header>
+             <img src="/media/TeaBag_Logo_w_Name_blue.webp" id="wName"/>
+             <p>Click. Slide. <span id="comm">Interact</span>.</p>
+         
+    </header>
+    <main id="m">
+        <div id="con">
+            <div class="btns">
+                <button hx-post="/gencode/" hx-swap="innerHTML" hx-target="#hereCode" hx-trigger="click" class="upperButtons" id="genCode">Generate lobby code</button>
+            </div>
+            
+            <div class="btns">
+                <button hx-post="/get_opinions/" hx-trigger="click" hx-swap="afterend" class="upperButtons" id="getBtn">Get responses</button>
+            </div>
+           
+        </div>
+        <div id="con2">
+            <h3>Your new code:</h3>
+            <div id="hereCode"></div>
+        </div>
+    </main>
+    <footer>
+        
+               <button hx-post="/logout/" hx-trigger="click" hx-swap="none" id="logout">Logout</button>
+         
+    </footer>
+    <script>
+        getBtn.addEventListener("click", ()=>{
+            m.innerHTML ="";
+            container1 = document.createElement("div");
+            container1.setAttribute("class", "containers");
+            container2 = document.createElement("div");
+            container2.setAttribute("class", "containers");
+            
+            h31 = document.createElement("h3");
+            h31.innerHTML = "Your Lobbies";
+            h32 = document.createElement("h3");
+            h32.innerHTML = "Opinions";
+            
+            m.append(container1, container2);
+            container1.append(h31);
+            container2.append(h32);
+            
+            opBox = document.createElement("div");
+            opBox.setAttribute("id", "i2");
+            
+            listBox = document.createElement("ul");
+            opBox.setAttribute("id", "responsebox");
+            
+            lobList = document.createElement("ul");
+            container1.append(listBox);
+            listBox.append(lobList);
+            container2.append(opBox);
+            
+            fetch("/get_opinions/", {
+                method: "POST",
+            }).then(response => response.text())
+                .then(data => {
+                console.log(data);
+                lobList.innerHTML = data;
+                htmx.process(container1);
+            });
+        });
+    </script>
 </body>
 </html>

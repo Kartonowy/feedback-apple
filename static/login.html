@@ -3,20 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <link rel="stylesheet" href="/styles/join_and_other.css"/>
+    <title>Log In</title>
+    <style>
+        
+        main{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            height: 100vh;
+        }
+        form{
+            height: 80%;
+            
+        }
+        h3{
+            font-size: 5vh;
+            color: var(--col3);
+            padding-top: 20px;
+        }
+        input[type='submit']{
+            width: 80%;
+            
+        }
+    </style>
 </head>
 <body>
-    <form action="/login/" method="post">
-        <input type="text" name="email" placeholder="Email">
-        <input type="password" name="password" placeholder="Password">
-        <input type="submit" value="Submit">
-    </form>
-    <form action="/register/" method="post">
-        <input type="text" name="first_name" placeholder="First Name">
-        <input type="text" name="last_name" placeholder="Last Name">
-        <input type="text" name="email" placeholder="Email">
-        <input type="password" name="password" placeholder="Password">
-        <input type="submit" value="Submit">
-    </form>
+    <header>
+             <img src="/media/TeaBag_Logo_w_Name_blue.webp" id="wName"/>
+             <p>Click. Slide. <span id="comm">Interact</span>.</p>
+         
+    </header>
+    <main>
+         <form action="/login/" method="post">
+             <h3>Log In</h3>
+            <div class="inpBox">
+                <input type="text" name="email" placeholder="Email">
+                <input type="password" name="password" placeholder="Password">
+            </div>
+            <input type="submit" value="Submit">
+            
+        </form>
+        <form action="/register/" method="post">
+            <h3>Register</h3>
+            <div class="inpBox">
+                <input type="text" name="first_name" placeholder="First Name">
+                <input type="text" name="last_name" placeholder="Last Name">
+                <input type="text" name="email" placeholder="Email">
+                <input type="password" name="password" placeholder="Password">
+            </div>
+            <input type="submit" value="Submit">
+            
+        </form>
+    </main>
+    <footer>
+         <p id="aboutP">
+            <a href="details.html">About Us</a>|<a href="details.html">Terms</a>
+        </p>
+    </footer>
+   
 </body>
 </html>

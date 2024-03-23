@@ -92,17 +92,9 @@ func main() {
         w.Write([]byte(response.GetOpinions(w, r, conn)))
     })
 
-    router.Post("/get_details/", func(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte(response.GetDetails(w, r, conn)))
-    })
-
-    router.Get("/redirect/{code}", func(w http.ResponseWriter, r *http.Request) {
+    router.Post("/get_details/{code}", func(w http.ResponseWriter, r *http.Request) {
         code := chi.URLParam(r, "code")
-        w.Header().Add("HX-Redirect", fmt.Sprintf("/details/%s", code))
-    })
-
-    router.Get("/details/{code}", func(w http.ResponseWriter, r *http.Request) {
-        http.ServeFile(w, r, "static/details.html")
+        w.Write([]byte(response.GetDetails(w, r, conn, code)))
     })
 
     router.Get("/styles/{file}", func(w http.ResponseWriter, r *http.Request) {
@@ -113,6 +105,16 @@ func main() {
     router.Get("/scripts/{file}", func(w http.ResponseWriter, r *http.Request) {
         file := chi.URLParam(r, "file")
         http.ServeFile(w, r, fmt.Sprintf("static/scripts/%s", file))
+    })
+
+    router.Get("/media/{file}", func(w http.ResponseWriter, r *http.Request) {
+        file := chi.URLParam(r, "file")
+        http.ServeFile(w, r, fmt.Sprintf("static/media/%s", file))
+    })
+
+    router.Get("/htmx/{file}", func(w http.ResponseWriter, r *http.Request) {
+        file := chi.URLParam(r, "file")
+        http.ServeFile(w, r, fmt.Sprintf("htmx/%s", file))
     })
 
     router.Get("/thankyou/", func(w http.ResponseWriter, r *http.Request) {
@@ -157,4 +159,5 @@ func addAccount(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 	if err != nil {
 		panic(err)
 	}
+    http.Redirect(w, r, "/account/", http.StatusSeeOther)
 }

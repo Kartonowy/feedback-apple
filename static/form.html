@@ -3,17 +3,19 @@
     <head>
         <meta charset="utf-8">
 <!--         <link rel="stylesheet" href="style.css"> -->
+        <link rel="stylesheet" href="/styles/join_index_style.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Playfair Display|Rubik|Gloock">
+<!--         <link rel="stylesheet" href="/styles/join_and_other.css"> -->
         
         <title>TeaBag</title>
     </head>
     <body>
         <!-- MAIN -->
+        <header>
+            <img src="/media/TeaBag_Logo_w_Name_blue.webp" id="wName">
+            <p>Click. Slide. <span id="comm">Interact</span>.</p>
+        </header>
         <main>
-            <header>
-                <p>Click. Slide. <span id="comm">Interact</span>.</p>
-                <p id="heading">TeaBag</p>
-            </header>
             
             <form>
                 <p id="info">Single out the feedback</p>
@@ -27,12 +29,20 @@
 
                 <div id="check">
                     <input type="checkbox" required>
-                    <p>By sending my feedback I agree to follow the <a id="rules" href="rules_en.html">rules</a>.</p>
+                    <p>By sending my feedback I promise to be polite and respectful.</p>
                 </div>
 
-                <button id="sendButton" type="submit">Send</button>
+                <div id="send">
+                    <button id="sendButton" type="submit">Send</button>
+                </div>
             </form>
         </main>
+
+        <footer>
+            <p id="aboutP">
+            <a href="details.html">About Us</a>|<a href="details.html">Terms</a>
+            </p>
+        </footer>
         <script src="/scripts/form.js"></script>
             
          

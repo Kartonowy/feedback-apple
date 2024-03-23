@@ -3,12 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="/styles/join_and_other.css"/>
+    <title>Join</title>
+    <style>
+        
+    </style>
 </head>
+    
 <body>
-   <form action="/redirect_lobby/" method="post">
-        <input type="text" name="code" placeholder="Enter code">
-        <input type="submit" value="Enter ">
-   </form>
+    <header>
+             <img src="/media/TeaBag_Logo_w_Name_blue.webp" id="wName"/>
+             <p>Click. Slide. <span id="comm">Interact</span>.</p>
+         
+    </header>
+    <main>
+       
+
+        <form action="/redirect_lobby/" method="post">
+            <input type="text" name="code" placeholder="Enter code" id="in1">
+            <div id="ss">
+                <input type="submit" value="Enter " id="in2">
+            </div>
+
+        </form>
+    </main>
+    <footer>
+        <p id="aboutP">
+            <a href="details.html">About Us</a>|<a href="details.html">Terms</a>
+        </p>
+    </footer>
+   
 </body>
 </html>

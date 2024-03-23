@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="join_and_other.css"/>
+    <title>About Us</title>
+    <style>
+      
+      
+        h1{
+            font-size: 10vh;
+        }
+        #ppp{
+            color: #2A2440;
+            width: 100%;
+            height: 500px;
+            line-height: 20px;
+        }
+        
+        #info{
+            width: 100%;
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            
+            
+        }
+        #cont{
+            width: 75%;
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+            
+        }
+        #gallery{
+            width: 90%;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            flex-wrap: wrap;
+            height: 50%;
+            
+        }
+        #gallery>img{
+            height: 90px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+     <header>
+             <img src="TeaBag_Logo_w_Name_blue.webp" id="wName"/>
+             <p>Click. Slide. <span id="comm">Interact</span>.</p>
+         
+    </header>
+    <main>
+        <div id="cont">
+            <div id="info">
+                <h3>Who are We?</h3>
+                <p id="ppp">
+                    We're just a group of four getting stuck into the Future School project. Our aim? Simple. We want to make our schools better by tackling the stuff that's not working. Our project is like a safe zone where students and teachers can chat openly. Students can share their thoughts with teachers without worrying about getting into trouble, and teachers can use that feedback to make things even better.
+                </p>
+            </div>
+            <div id="gallery">
+                <img src="logos/fals_logo.jpg" s/>
+                <img src="logos/logo1.png"/>
+                <img src="logos/logo2.png"/>
+                <img src="logos/zsk_logo.png"/>
+            </div>
+            
+        </div>
+    </main>
+    <footer>
+         <p id="aboutP">
+            <a href="aboutUs.html">About Us</a>|<a href="details.html">Terms</a>
+        </p>
+    </footer>
+    <script>
+        let slider = document.createElement("input");
+                        slider.type = "range";
+                        slider.id = "TeaSlider";
+                        slider.min = 0;
+                        slider.max = 10;
+                        slider.step = 1;
+                        main.append(slider);
+    </script>
+</body>
+</html>

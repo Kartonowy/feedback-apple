@@ -4,9 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Details</title>
-    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/styles/join_and_other.css"/>
+    <script src="/htmx/htmx.min.js"></script>
+    <style>
+        main{
+            display: flex;
+            flex-direction: row;
+           
+            justify-content: space-evenly;
+        }
+        h1, h2{
+            font-size: 2vh;
+            
+        }
+        h3{
+            font-size: 6vh;
+            color: var(--col5);
+        }
+        .containers{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            border-radius: 15px;
+            width: 40%;
+            height: 80%;
+            background-color: var(--col2);
+  
+}
+
+        #i1> #i2>*{
+        font-size: 3vh;
+        line-height: 10px;
+        }
+        #i2{
+            overflow:  hidden; 
+            padding-top: 80px;
+        }
+        #i2:hover{
+            
+            overflow:  auto;
+        }
+        
+        
+    </style>
 </head>
 <body>
-   <div hx-post="/get_details/" hx-swap="innerHTML" hx-trigger="load"></div> 
+    <header>
+        <img src="/media/TeaBag_Logo_w_Name_blue.webp" id="wName"/>
+        <p>Click. Slide. <span id="comm">Interact</span>.</p>
+    </header>
+    <main>
+        <div class="containers">
+            <h3>Your Lobbies</h3>
+            <div class="inpBox" id="i1">
+                <ol>
+                    <li>some lobby code</li>
+                </ol>
+            </div>
+            
+        </div>
+        <div class="containers">
+             
+            <h3>Opinions</h3>
+            <div class="inpBox" id="i2">
+                <div>
+                    
+                    <h1>first choice: Lessons</h1><h2>second choice: Learning Pace
+                    </h2>
+                    <div>rating: 10</div></div>
+                    <div><h1>first choice: Other</h1><div>rating: spill it</div></div><div><h1>first choice: Other</h1><div>rating: teen</div></div><div><h1>first choice: Other</h1><div>rating: Write your feedbakc here...</div></div><div><h1>first choice: Other</h1><div>rating: oth</div></div></div>
+                <div hx-post="/get-details/" hx-swap="innerHTML" hx-trigger="load"></div>
+            </div>
+            
+    </main>
+    <footer>
+    </footer>
+    <script>
+   </script>
 </body>
 </html>
